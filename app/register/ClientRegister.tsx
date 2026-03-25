@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Building2, DollarSign, Phone, MapPin, Check, Search, ChevronDown, X } from 'lucide-react';
 
 export const PRODUCT_CATEGORIES_BY_INDUSTRY: Record<string, string[]> = {
@@ -584,18 +585,12 @@ function FranchiseeRegistration() {
 }
 
 function FranchisorRegistration() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     companyName: '',
-    firstName: '',
-    lastName: '',
+    contactPersonName: '',
     email: '',
     phone: '',
-    industry: '',
-    productCategory: '',
-    foundedYear: '',
-    unitsOperating: '',
-    investmentRequired: '',
-    description: '',
     password: '',
     confirmPassword: '',
   });
@@ -617,13 +612,9 @@ function FranchisorRegistration() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.companyName) newErrors.companyName = 'Company name is required';
-    if (!formData.firstName) newErrors.firstName = 'First name is required';
-    if (!formData.lastName) newErrors.lastName = 'Last name is required';
+    if (!formData.contactPersonName) newErrors.contactPersonName = 'Contact person name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.phone) newErrors.phone = 'Phone is required';
-    if (!formData.industry) newErrors.industry = 'Industry is required';
-    if (!formData.foundedYear) newErrors.foundedYear = 'Founded year is required';
-    if (!formData.description) newErrors.description = 'Company description is required';
     if (!formData.password) newErrors.password = 'Password is required';
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
 
@@ -643,26 +634,29 @@ function FranchisorRegistration() {
         body: JSON.stringify({
           account_type: 'franchisor',
           email: formData.email,
-          username: formData.email, // backend usually expects a username
+          username: formData.email,
           password: formData.password,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          // Extra profile data
           company_name: formData.companyName,
-          contact_person_name: `${formData.firstName} ${formData.lastName}`.trim(),
+          contact_person_name: formData.contactPersonName,
           contact_number: formData.phone,
-          industry: formData.industry,
-          product_category: formData.productCategory,
-          about: formData.description,
-          founded_year: formData.foundedYear,
-          units_operating: formData.unitsOperating,
-          investment_required: formData.investmentRequired,
           source_platform: 'NFIS',
         }),
       });
 
       if (response.ok) {
-        setSubmitted(true);
+        const data = await response.json();
+        if (data.access) localStorage.setItem('access_token', data.access);
+        if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
+        if (formData.email) localStorage.setItem('user_email', formData.email);
+        
+        const role = data.user?.role || data.role || 'franchisor';
+        localStorage.setItem('user_role', role);
+        localStorage.setItem('user_name', formData.contactPersonName);
+        localStorage.setItem('company_name', formData.companyName);
+
+        window.dispatchEvent(new Event('auth-change'));
+        router.push('/dashboard/franchisor');
+        return;
       } else {
         const errorData = await response.json();
         const errorMsg = Object.entries(errorData)
@@ -733,45 +727,24 @@ function FranchisorRegistration() {
             </div>
 
             {/* Contact Person */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 mb-2">
-                  Contact First Name
-                </label>
-                <div className="relative">
-                  <User size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.firstName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="Jane"
-                  />
-                </div>
-                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+            <div>
+              <label htmlFor="contactPersonName" className="block text-sm font-medium text-gray-900 mb-2">
+                Contact Person Name
+              </label>
+              <div className="relative">
+                <User size={18} className="absolute left-3 top-3 text-gray-400" />
+                <input
+                  type="text"
+                  name="contactPersonName"
+                  id="contactPersonName"
+                  value={formData.contactPersonName}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.contactPersonName ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  placeholder="Jane Smith"
+                />
               </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 mb-2">
-                  Contact Last Name
-                </label>
-                <div className="relative">
-                  <User size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.lastName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="Smith"
-                  />
-                </div>
-                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
-              </div>
+              {errors.contactPersonName && <p className="text-red-500 text-sm mt-1">{errors.contactPersonName}</p>}
             </div>
 
             {/* Email and Phone */}
@@ -809,157 +782,14 @@ function FranchisorRegistration() {
                     onChange={handleChange}
                     className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.phone ? 'border-red-500' : 'border-gray-300'
                       }`}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+91 XXXXX XXXXX"
                   />
                 </div>
                 {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
             </div>
 
-            {/* Business Details */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="industry" className="block text-sm font-medium text-gray-900 mb-2">
-                  Industry
-                </label>
-                <select
-                  name="industry"
-                  id="industry"
-                  value={formData.industry}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.industry ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                >
-                  <option value="">Select an industry</option>
-                  {Object.keys(PRODUCT_CATEGORIES_BY_INDUSTRY).map(ind => (
-                    <option key={ind} value={ind}>{ind}</option>
-                  ))}
-                </select>
-                {errors.industry && <p className="text-red-500 text-sm mt-1">{errors.industry}</p>}
-              </div>
 
-              <div>
-                <label htmlFor="productCategory" className="block text-sm font-medium text-gray-900 mb-2">
-                  Product/Category
-                </label>
-                <select
-                  name="productCategory"
-                  id="productCategory"
-                  value={formData.productCategory}
-                  onChange={handleChange}
-                  disabled={!formData.industry}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all disabled:opacity-50 disabled:bg-gray-50"
-                >
-                  <option value="">{formData.industry ? 'Select a category' : 'Select Industry First'}</option>
-                  {(PRODUCT_CATEGORIES_BY_INDUSTRY[formData.industry] || []).map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="foundedYear" className="block text-sm font-medium text-gray-900 mb-2">
-                  Year Founded
-                </label>
-                <select
-                  name="foundedYear"
-                  id="foundedYear"
-                  value={formData.foundedYear}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.foundedYear ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                >
-                  <option value="">Select year</option>
-                  {Array.from({ length: 75 }, (_, i) => new Date().getFullYear() - i).map(y => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-                {errors.foundedYear && <p className="text-red-500 text-sm mt-1">{errors.foundedYear}</p>}
-              </div>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-900 mb-2">
-                About Your Company
-              </label>
-              <textarea
-                name="description"
-                id="description"
-                rows={4}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.description ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                placeholder="Briefly describe your franchise opportunity..."
-              />
-              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
-            </div>
-
-            {/* Units and Investment */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="unitsOperating" className="block text-sm font-medium text-gray-900 mb-2">
-                  Units Currently Operating
-                </label>
-                <input
-                  type="number"
-                  name="unitsOperating"
-                  id="unitsOperating"
-                  value={formData.unitsOperating}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all"
-                  placeholder="10"
-                  min="1"
-                />
-              </div>
-              <div>
-                <label htmlFor="investmentRequired" className="block text-sm font-medium text-gray-900 mb-2">
-                  Investment Required (INR)
-                </label>
-                <div className="flex items-center gap-1 sm:gap-2 w-full px-4 py-[0.55rem] border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-600 focus-within:border-transparent transition-all bg-white">
-                  <span className="text-gray-500 font-bold">₹</span>
-                  <input type="number" placeholder="10" className="w-8 sm:w-12 bg-transparent outline-none text-gray-900 font-semibold no-spinners"
-                    onChange={(e) => {
-                      const currentParts = (formData.investmentRequired || '₹0 Lakh - ₹0 Lakh').split(' - ');
-                      const minUnit = currentParts[0]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh';
-                      setFormData({ ...formData, investmentRequired: `₹${e.target.value} ${minUnit} - ${currentParts[1] || '₹0 Lakh'}` });
-                    }}
-                    value={(formData.investmentRequired || '').split(' - ')[0]?.match(/₹?([\d.]+)/)?.[1] || ''}
-                  />
-                  <select className="bg-transparent outline-none text-gray-600 font-semibold appearance-none cursor-pointer"
-                    onChange={(e) => {
-                      const currentParts = (formData.investmentRequired || '₹0 Lakh - ₹0 Lakh').split(' - ');
-                      const minNum = currentParts[0]?.match(/₹?([\d.]+)/)?.[1] || '0';
-                      setFormData({ ...formData, investmentRequired: `₹${minNum} ${e.target.value} - ${currentParts[1] || '₹0 Lakh'}` });
-                    }}
-                    value={(formData.investmentRequired || '').split(' - ')[0]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh'}
-                  >
-                    <option value="K">K</option><option value="Lakh">Lakh</option><option value="Crore">Crore</option>
-                  </select>
-                  <span className="text-gray-400 font-black">-</span>
-                  <span className="text-gray-500 font-bold">₹</span>
-                  <input type="number" placeholder="50" className="w-8 sm:w-12 bg-transparent outline-none text-gray-900 font-semibold no-spinners"
-                    onChange={(e) => {
-                      const currentParts = (formData.investmentRequired || '₹0 Lakh - ₹0 Lakh').split(' - ');
-                      const maxUnit = currentParts[1]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh';
-                      setFormData({ ...formData, investmentRequired: `${currentParts[0] || '₹0 Lakh'} - ₹${e.target.value} ${maxUnit}` });
-                    }}
-                    value={(formData.investmentRequired || '').split(' - ')[1]?.match(/₹?([\d.]+)/)?.[1] || ''}
-                  />
-                  <select className="bg-transparent outline-none text-gray-600 font-semibold appearance-none cursor-pointer"
-                    onChange={(e) => {
-                      const currentParts = (formData.investmentRequired || '₹0 Lakh - ₹0 Lakh').split(' - ');
-                      const maxNum = currentParts[1]?.match(/₹?([\d.]+)/)?.[1] || '0';
-                      setFormData({ ...formData, investmentRequired: `${currentParts[0] || '₹0 Lakh'} - ₹${maxNum} ${e.target.value}` });
-                    }}
-                    value={(formData.investmentRequired || '').split(' - ')[1]?.match(/(K|Lakh|Crore)/i)?.[0] || 'Lakh'}
-                  >
-                    <option value="K">K</option><option value="Lakh">Lakh</option><option value="Crore">Crore</option>
-                  </select>
-                </div>
-              </div>
-            </div>
 
             {/* Passwords */}
             <div className="grid md:grid-cols-2 gap-4">
@@ -1032,18 +862,12 @@ function FranchisorRegistration() {
 }
 
 function InvestorRegistration() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    firmName: '',
-    firmLogo: '',
+    companyName: '',
+    contactPersonName: '',
     email: '',
     phone: '',
-    investmentCapacity: '',
-    preferredIndustries: [] as string[],
-    companiesFinanced: '',
-    experience: '',
-    description: '',
     password: '',
     confirmPassword: '',
   });
@@ -1052,8 +876,6 @@ function InvestorRegistration() {
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const industries = Object.keys(PRODUCT_CATEGORIES_BY_INDUSTRY);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
@@ -1061,25 +883,15 @@ function InvestorRegistration() {
     });
   };
 
-  const toggleIndustry = (industry: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      preferredIndustries: prev.preferredIndustries.includes(industry)
-        ? prev.preferredIndustries.filter((i) => i !== industry)
-        : [...prev.preferredIndustries, industry],
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     const newErrors: Record<string, string> = {};
 
-    if (!formData.firstName) newErrors.firstName = 'First name is required';
-    if (!formData.lastName) newErrors.lastName = 'Last name is required';
+    if (!formData.companyName) newErrors.companyName = 'Company name is required';
+    if (!formData.contactPersonName) newErrors.contactPersonName = 'Contact person name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.phone) newErrors.phone = 'Phone is required';
-    if (!formData.investmentCapacity) newErrors.investmentCapacity = 'Investment capacity is required';
     if (!formData.password) newErrors.password = 'Password is required';
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
 
@@ -1101,24 +913,27 @@ function InvestorRegistration() {
           email: formData.email,
           username: formData.email,
           password: formData.password,
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          firm_name: formData.firmName,
-          firm_logo: formData.firmLogo,
-          // Extra profile data
-          contact_person_name: `${formData.firstName} ${formData.lastName}`.trim(),
-          contact_number: formData.phone,
-          investment_budget: formData.investmentCapacity,
-          interested_sector: formData.preferredIndustries.join(', '),
-          about: formData.description,
-          experience: formData.experience,
-          companies_financed: formData.companiesFinanced,
+          company_name: formData.companyName,
+          full_name: formData.contactPersonName,
+          phone_number: formData.phone,
           source_platform: 'NFIS',
         }),
       });
 
       if (response.ok) {
-        setSubmitted(true);
+        const data = await response.json();
+        if (data.access) localStorage.setItem('access_token', data.access);
+        if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
+        if (formData.email) localStorage.setItem('user_email', formData.email);
+        
+        const role = data.user?.role || data.role || 'investor';
+        localStorage.setItem('user_role', role);
+        localStorage.setItem('user_name', formData.contactPersonName);
+        localStorage.setItem('company_name', formData.companyName);
+
+        window.dispatchEvent(new Event('auth-change'));
+        router.push('/dashboard/investor');
+        return;
       } else {
         const errorData = await response.json();
         const errorMsg = Object.entries(errorData)
@@ -1167,83 +982,46 @@ function InvestorRegistration() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Fields */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-900 mb-2">
-                  First Name
-                </label>
-                <div className="relative">
-                  <User size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.firstName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="Michael"
-                  />
-                </div>
-                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+            {/* Company Info */}
+            <div>
+              <label htmlFor="companyName" className="block text-sm font-medium text-gray-900 mb-2">
+                Company Name
+              </label>
+              <div className="relative">
+                <Building2 size={18} className="absolute left-3 top-3 text-gray-400" />
+                <input
+                  type="text"
+                  name="companyName"
+                  id="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.companyName ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  placeholder="Your Company/Firm Name"
+                />
               </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-900 mb-2">
-                  Last Name
-                </label>
-                <div className="relative">
-                  <User size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.lastName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="Johnson"
-                  />
-                </div>
-                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
-              </div>
+              {errors.companyName && <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>}
             </div>
 
-            {/* Firm Name */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firmName" className="block text-sm font-medium text-gray-900 mb-2">
-                  Firm Name (Optional)
-                </label>
-                <div className="relative">
-                  <Building2 size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="text"
-                    name="firmName"
-                    id="firmName"
-                    value={formData.firmName}
-                    onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all"
-                    placeholder="e.g. Acme Capital"
-                  />
-                </div>
+            {/* Contact Person */}
+            <div>
+              <label htmlFor="contactPersonName" className="block text-sm font-medium text-gray-900 mb-2">
+                Contact Person Name
+              </label>
+              <div className="relative">
+                <User size={18} className="absolute left-3 top-3 text-gray-400" />
+                <input
+                  type="text"
+                  name="contactPersonName"
+                  id="contactPersonName"
+                  value={formData.contactPersonName}
+                  onChange={handleChange}
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.contactPersonName ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  placeholder="Jane Smith"
+                />
               </div>
-              <div>
-                <label htmlFor="firmLogo" className="block text-sm font-medium text-gray-900 mb-2">
-                  Firm Logo Link (Optional)
-                </label>
-                <div className="relative">
-                  <input
-                    type="url"
-                    name="firmLogo"
-                    id="firmLogo"
-                    value={formData.firmLogo}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all"
-                    placeholder="https://example.com/logo.png"
-                  />
-                </div>
-              </div>
+              {errors.contactPersonName && <p className="text-red-500 text-sm mt-1">{errors.contactPersonName}</p>}
             </div>
 
             {/* Email and Phone */}
@@ -1262,7 +1040,7 @@ function InvestorRegistration() {
                     onChange={handleChange}
                     className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
                       }`}
-                    placeholder="michael@example.com"
+                    placeholder="jane@example.com"
                   />
                 </div>
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -1281,103 +1059,10 @@ function InvestorRegistration() {
                     onChange={handleChange}
                     className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.phone ? 'border-red-500' : 'border-gray-300'
                       }`}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+91 XXXXX XXXXX"
                   />
                 </div>
                 {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
-              </div>
-            </div>
-
-            {/* Investment Capacity */}
-            <div>
-              <label htmlFor="investmentCapacity" className="block text-sm font-medium text-gray-900 mb-2">
-                Investment Capacity
-              </label>
-              <select
-                name="investmentCapacity"
-                id="investmentCapacity"
-                value={formData.investmentCapacity}
-                onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.investmentCapacity ? 'border-red-500' : 'border-gray-300'
-                  }`}
-              >
-                <option value="">Select your investment capacity</option>
-                <option value="₹50 Lakhs - ₹1 Crore">₹50 Lakhs - ₹1 Crore</option>
-                <option value="₹1 Crore - ₹2.5 Crores">₹1 Crore - ₹2.5 Crores</option>
-                <option value="₹2.5 Crores - ₹5 Crores">₹2.5 Crores - ₹5 Crores</option>
-                <option value="₹5 Crores - ₹10 Crores">₹5 Crores - ₹10 Crores</option>
-                <option value="₹10 Crores+">₹10 Crores+</option>
-              </select>
-              {errors.investmentCapacity && <p className="text-red-500 text-sm mt-1">{errors.investmentCapacity}</p>}
-            </div>
-
-            {/* Preferred Industries */}
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-3">Preferred Industries</label>
-              <div className="grid grid-cols-2 gap-3">
-                {industries.map((industry) => (
-                  <label key={industry} className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.preferredIndustries.includes(industry)}
-                      onChange={() => toggleIndustry(industry)}
-                      className="w-4 h-4 border border-gray-300 rounded accent-green-600"
-                    />
-                    <span className="text-sm text-gray-700">{industry}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-900 mb-2">
-                About Your Investor Profile
-              </label>
-              <textarea
-                name="description"
-                id="description"
-                rows={4}
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.description ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                placeholder="Tell us about your investment philosophy and what kind of brands you're looking for..."
-              />
-              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
-            </div>
-
-            {/* Experience and Companies Financed */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="experience" className="block text-sm font-medium text-gray-900 mb-2">
-                  Business Experience (Years)
-                </label>
-                <input
-                  type="number"
-                  name="experience"
-                  id="experience"
-                  min="0"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all"
-                  placeholder="e.g. 5"
-                />
-              </div>
-              <div>
-                <label htmlFor="companiesFinanced" className="block text-sm font-medium text-gray-900 mb-2">
-                  Number of Companies Financed
-                </label>
-                <input
-                  type="number"
-                  name="companiesFinanced"
-                  id="companiesFinanced"
-                  min="0"
-                  value={formData.companiesFinanced}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all"
-                  placeholder="e.g. 12"
-                />
               </div>
             </div>
 
