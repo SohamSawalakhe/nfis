@@ -11,18 +11,20 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Section */}
           <div>
-            <div className="flex items-center gap-3 mb-6 group">
-              <div className="relative w-12 h-12 flex-shrink-0 transition-transform group-hover:scale-105">
-                <Image
-                  src="/logo.png"
-                  alt="NFIS Logo"
-                  fill
-                  className="object-contain"
-                />
+            <div className="flex items-center gap-4 mb-6 group">
+              <div className="relative w-14 h-14 bg-white rounded-full p-1.5 shadow-lg border border-gray-700/50 flex items-center justify-center transition-all group-hover:scale-110 group-hover:shadow-white/10">
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/logo.png"
+                    alt="NFIS Logo"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
               </div>
               <div>
                 <p className="font-black text-lg leading-none">NFIS</p>
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">India Summit</p>
+                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">National Franchise Investment Summit</p>
               </div>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed">

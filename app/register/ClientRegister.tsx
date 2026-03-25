@@ -27,7 +27,7 @@ export default function RegisterPage() {
           {/* Header */}
           <div className="text-center mb-12">
             <Link href="/" className="inline-block transition-transform hover:scale-110 mb-8">
-              <div className="relative w-24 h-24 bg-white rounded-full p-4 shadow-xl border border-blue-100/50 flex items-center justify-center">
+              <div className="relative w-24 h-24 bg-white rounded-full p-2 shadow-xl border border-blue-100/50 flex items-center justify-center">
                 <div className="relative w-full h-full">
                   <Image
                     src="/logo.png"

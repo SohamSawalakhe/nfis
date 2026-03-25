@@ -58,7 +58,7 @@ export default function LoginPage() {
           const firstName = data.user?.first_name || data.first_name;
           const lastName = data.user?.last_name || data.last_name;
           const username = data.user?.username || data.username;
-          
+
           let displayName = 'User';
           if (firstName) {
             displayName = `${firstName} ${lastName || ''}`.trim();
@@ -67,7 +67,7 @@ export default function LoginPage() {
           } else if (email) {
             displayName = email.split('@')[0];
           }
-          
+
           localStorage.setItem('user_name', displayName);
 
           if (data.user?.company_name || data.company_name) {
@@ -160,7 +160,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <p className="font-black text-xl text-gray-900 leading-none">NFIS</p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">India Summit</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">National Franchise Investment Summit</p>
               </div>
             </Link>
           </div>

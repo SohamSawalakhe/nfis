@@ -33,8 +33,8 @@ export function ExhibitionCard({ exhibition }: ExhibitionCardProps) {
             />
           ) : (
             <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-gray-50 to-gray-200 border-b border-gray-100">
-               <Building2 size={40} className="text-red-600/20 mb-2" />
-               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600/40 text-center px-8">National Franchise India Summit</p>
+              <Building2 size={40} className="text-red-600/20 mb-2" />
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600/40 text-center px-8">National Franchise Investment Summit</p>
             </div>
           )}
           {exhibition.featured ? (
