@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -85,16 +86,16 @@ export default function LoginPage() {
             router.push('/dashboard');
           }
         } else {
-          alert(data.detail || 'Login failed. Please check your credentials.');
+          toast.error(data.detail || 'Login failed. Please check your credentials.');
         }
       } else {
         // Not a JSON response, likely an HTML 404/500 page
         console.error('Non-JSON response received:', response.status);
-        alert(`Server error (${response.status}). Please verify your backend API URL and login endpoint.`);
+        toast.error(`Server error (${response.status}). Please verify your backend API URL and login endpoint.`);
       }
     } catch (error) {
       console.error('Login attempt error:', error);
-      alert('Network error occurred while trying to log in.');
+      toast.error('Network error occurred while trying to log in.');
     } finally {
       setIsLoading(false);
     }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -44,11 +45,11 @@ export default function SignInPage() {
           router.push('/dashboard');
         }
       } else {
-        alert(data.detail || 'Login failed. Please check your credentials.');
+        toast.error(data.detail || 'Login failed. Please check your credentials.');
       }
     } catch (error) {
       console.error('Login error:', error);
-      alert('Network error occurred while trying to log in.');
+      toast.error('Network error occurred while trying to log in.');
     } finally {
       setIsLoading(false);
     }

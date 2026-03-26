@@ -4,6 +4,8 @@ import { Analytics } from '@vercel/analytics/next'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { Toaster } from 'sonner'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -89,6 +91,7 @@ export default function RootLayout({
         <Footer />
         <Analytics />
         <Toaster position="top-right" expand={false} richColors />
+        <ToastContainer position="top-right" autoClose={3000} />
       </body>
     </html>
   )

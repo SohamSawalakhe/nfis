@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Building2, DollarSign, Phone, MapPin, Check, Search, ChevronDown, X } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export const PRODUCT_CATEGORIES_BY_INDUSTRY: Record<string, string[]> = {
   'Food & QSR': ['Fast Food', 'Fine Dining', 'Cafe/Bakery', 'Cloud Kitchen', 'Ice Cream & Desserts', 'Beverages', 'Other Food'],
@@ -264,11 +265,11 @@ function FranchiseeRegistration() {
         const errorMsg = Object.entries(errorData)
           .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(', ') : val}`)
           .join('\n');
-        alert(errorMsg || 'Registration failed. Please ensure all details are correct.');
+        toast.error(errorMsg || 'Registration failed. Please ensure all details are correct.');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('Network error occurred during registration.');
+      toast.error('Network error occurred during registration.');
     } finally {
       setIsLoading(false);
     }
@@ -599,6 +600,79 @@ function FranchisorRegistration() {
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [emailOtp, setEmailOtp] = useState('');
+  const [phoneOtp, setPhoneOtp] = useState('');
+  const [isEmailOtpSent, setIsEmailOtpSent] = useState(false);
+  const [isPhoneOtpSent, setIsPhoneOtpSent] = useState(false);
+  const [isVerifying, setIsVerifying] = useState<'email' | 'phone' | null>(null);
+  const [isSendingOtp, setIsSendingOtp] = useState<'email' | 'phone' | null>(null);
+
+  const sendOtp = async (type: 'email' | 'phone') => {
+    const value = type === 'email' ? formData.email : formData.phone;
+    if (!value) {
+        toast.error(`Please enter your ${type} first.`);
+      return;
+    }
+
+    setIsSendingOtp(type);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/api/register/send-otp/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, value }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (type === 'email') setIsEmailOtpSent(true);
+        else setIsPhoneOtpSent(true);
+        toast.success(data.message || 'OTP sent successfully!');
+      } else {
+        toast.error(data.detail || 'Failed to send OTP.');
+      }
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      toast.error('Failed to send OTP.');
+    } finally {
+      setIsSendingOtp(null);
+    }
+  };
+
+  const verifyOtp = async (type: 'email' | 'phone') => {
+    const value = type === 'email' ? formData.email : formData.phone;
+    const otp = type === 'email' ? emailOtp : phoneOtp;
+
+    if (!otp) {
+      toast.error('Please enter the OTP.');
+      return;
+    }
+
+    setIsVerifying(type);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/api/register/verify-otp/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, value, otp }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (type === 'email') setIsEmailVerified(true);
+        else setIsPhoneVerified(true);
+        toast.success(data.message || 'Verified successfully!');
+      } else {
+        toast.error(data.detail || 'Invalid OTP.');
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      toast.error('Verification failed.');
+    } finally {
+      setIsVerifying(null);
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
@@ -662,11 +736,11 @@ function FranchisorRegistration() {
         const errorMsg = Object.entries(errorData)
           .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(', ') : val}`)
           .join('\n');
-        alert(errorMsg || 'Registration failed. Please try again.');
+        toast.error(errorMsg || 'Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('An error occurred during registration.');
+      toast.error('An error occurred during registration.');
     } finally {
       setIsLoading(false);
     }
@@ -753,38 +827,125 @@ function FranchisorRegistration() {
                 <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
                   Business Email
                 </label>
-                <div className="relative">
-                  <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="jane@company.com"
-                  />
-                </div>
+                {(!isEmailOtpSent || isEmailVerified) ? (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        disabled={isEmailVerified}
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
+                          } ${isEmailVerified ? 'bg-green-50 border-green-200' : ''}`}
+                        placeholder="jane@company.com"
+                      />
+                    </div>
+                    {!isEmailVerified && (
+                      <button
+                        type="button"
+                        onClick={() => sendOtp('email')}
+                        disabled={!formData.email || isVerifying === 'email' || isSendingOtp === 'email'}
+                        className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all flex items-center justify-center min-w-[90px]"
+                      >
+                        {isSendingOtp === 'email' ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Send OTP'}
+                      </button>
+                    )}
+                    {isEmailVerified && (
+                      <div className="flex items-center text-green-600 font-semibold text-sm gap-1">
+                        <Check size={18} /> Verified
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Enter Email OTP"
+                        value={emailOtp}
+                        onChange={(e) => setEmailOtp(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm"
+                        autoFocus
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => verifyOtp('email')}
+                      disabled={isVerifying === 'email'}
+                      className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all"
+                    >
+                      {isVerifying === 'email' ? '...' : 'Verify'}
+                    </button>
+
+                  </div>
+                )}
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
+
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-2">
                   Phone Number
                 </label>
-                <div className="relative">
-                  <Phone size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="tel"
-                    name="phone"
-                    id="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.phone ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="+91 XXXXX XXXXX"
-                  />
-                </div>
+                {(!isPhoneOtpSent || isPhoneVerified) ? (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Phone size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="tel"
+                        name="phone"
+                        id="phone"
+                        disabled={isPhoneVerified}
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.phone ? 'border-red-500' : 'border-gray-300'
+                          } ${isPhoneVerified ? 'bg-green-50 border-green-200' : ''}`}
+                        placeholder="+91 XXXXX XXXXX"
+                      />
+                    </div>
+                    {!isPhoneVerified && (
+                      <button
+                        type="button"
+                        onClick={() => sendOtp('phone')}
+                        disabled={!formData.phone || isVerifying === 'phone' || isSendingOtp === 'phone'}
+                        className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-all flex items-center justify-center min-w-[90px]"
+                      >
+                        {isSendingOtp === 'phone' ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Send OTP'}
+                      </button>
+                    )}
+                    {isPhoneVerified && (
+                      <div className="flex items-center text-green-600 font-semibold text-sm gap-1">
+                        <Check size={18} /> Verified
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Enter Phone OTP"
+                        value={phoneOtp}
+                        onChange={(e) => setPhoneOtp(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm"
+                        autoFocus
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => verifyOtp('phone')}
+                      disabled={isVerifying === 'phone'}
+                      className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all"
+                    >
+                      {isVerifying === 'phone' ? '...' : 'Verify'}
+                    </button>
+
+                  </div>
+                )}
                 {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
             </div>
@@ -792,59 +953,61 @@ function FranchisorRegistration() {
 
 
             {/* Passwords */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.password ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="••••••••"
-                  />
+            <div className={`space-y-6 transition-all duration-300 ${(!isEmailVerified || !isPhoneVerified) ? 'opacity-40 grayscale pointer-events-none' : 'opacity-100'}`}>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                    <input
+                      type="password"
+                      name="password"
+                      id="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.password ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                 </div>
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-              </div>
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 mb-2">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="••••••••"
-                  />
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 mb-2">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      id="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
                 </div>
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
               </div>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center font-bold"
+              disabled={isLoading || !isEmailVerified || !isPhoneVerified || !formData.companyName || !formData.contactPersonName || !formData.password || formData.password !== formData.confirmPassword}
+              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center font-bold"
             >
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
                   Creating Account...
                 </>
-              ) : 'Create Franchisor Account'}
+              ) : 'Register as Franchisor'}
             </button>
 
             {/* Sign In Link */}
@@ -875,6 +1038,79 @@ function InvestorRegistration() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [emailOtp, setEmailOtp] = useState('');
+  const [phoneOtp, setPhoneOtp] = useState('');
+  const [isEmailOtpSent, setIsEmailOtpSent] = useState(false);
+  const [isPhoneOtpSent, setIsPhoneOtpSent] = useState(false);
+  const [isVerifying, setIsVerifying] = useState<'email' | 'phone' | null>(null);
+  const [isSendingOtp, setIsSendingOtp] = useState<'email' | 'phone' | null>(null);
+
+  const sendOtp = async (type: 'email' | 'phone') => {
+    const value = type === 'email' ? formData.email : formData.phone;
+    if (!value) {
+        toast.error(`Please enter your ${type} first.`);
+      return;
+    }
+
+    setIsSendingOtp(type);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/api/register/send-otp/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, value }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (type === 'email') setIsEmailOtpSent(true);
+        else setIsPhoneOtpSent(true);
+        toast.success(data.message || 'OTP sent successfully!');
+      } else {
+        toast.error(data.detail || 'Failed to send OTP.');
+      }
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      toast.error('Failed to send OTP.');
+    } finally {
+      setIsSendingOtp(null);
+    }
+  };
+
+  const verifyOtp = async (type: 'email' | 'phone') => {
+    const value = type === 'email' ? formData.email : formData.phone;
+    const otp = type === 'email' ? emailOtp : phoneOtp;
+
+    if (!otp) {
+      toast.error('Please enter the OTP.');
+      return;
+    }
+
+    setIsVerifying(type);
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${API_URL}/api/register/verify-otp/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, value, otp }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        if (type === 'email') setIsEmailVerified(true);
+        else setIsPhoneVerified(true);
+        toast.success(data.message || 'Verified successfully!');
+      } else {
+        toast.error(data.detail || 'Invalid OTP.');
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      toast.error('Verification failed.');
+    } finally {
+      setIsVerifying(null);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({
@@ -925,7 +1161,7 @@ function InvestorRegistration() {
         if (data.access) localStorage.setItem('access_token', data.access);
         if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
         if (formData.email) localStorage.setItem('user_email', formData.email);
-        
+
         const role = data.user?.role || data.role || 'investor';
         localStorage.setItem('user_role', role);
         localStorage.setItem('user_name', formData.contactPersonName);
@@ -939,11 +1175,11 @@ function InvestorRegistration() {
         const errorMsg = Object.entries(errorData)
           .map(([key, val]) => `${key}: ${Array.isArray(val) ? val.join(', ') : val}`)
           .join('\n');
-        alert(errorMsg || 'Registration failed. Please try again.');
+        toast.error(errorMsg || 'Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('An error occurred during registration.');
+      toast.error('An error occurred during registration.');
     } finally {
       setIsLoading(false);
     }
@@ -1030,96 +1266,185 @@ function InvestorRegistration() {
                 <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
                   Email Address
                 </label>
-                <div className="relative">
-                  <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="jane@example.com"
-                  />
-                </div>
+                {(!isEmailOtpSent || isEmailVerified) ? (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        disabled={isEmailVerified}
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.email ? 'border-red-500' : 'border-gray-300'
+                          } ${isEmailVerified ? 'bg-green-50 border-green-200' : ''}`}
+                        placeholder="jane@example.com"
+                      />
+                    </div>
+                    {!isEmailVerified && (
+                      <button
+                        type="button"
+                        onClick={() => sendOtp('email')}
+                        disabled={!formData.email || isVerifying === 'email' || isSendingOtp === 'email'}
+                        className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all flex items-center justify-center min-w-[90px]"
+                      >
+                        {isSendingOtp === 'email' ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Send OTP'}
+                      </button>
+                    )}
+                    {isEmailVerified && (
+                      <div className="flex items-center text-green-600 font-semibold text-sm gap-1">
+                        <Check size={18} /> Verified
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Enter Email OTP"
+                        value={emailOtp}
+                        onChange={(e) => setEmailOtp(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
+                        autoFocus
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => verifyOtp('email')}
+                      disabled={isVerifying === 'email'}
+                      className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all"
+                    >
+                      {isVerifying === 'email' ? '...' : 'Verify'}
+                    </button>
+
+                  </div>
+                )}
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
               </div>
+
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-2">
                   Phone Number
                 </label>
-                <div className="relative">
-                  <Phone size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="tel"
-                    name="phone"
-                    id="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.phone ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="+91 XXXXX XXXXX"
-                  />
-                </div>
+                {(!isPhoneOtpSent || isPhoneVerified) ? (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Phone size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="tel"
+                        name="phone"
+                        id="phone"
+                        disabled={isPhoneVerified}
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.phone ? 'border-red-500' : 'border-gray-300'
+                          } ${isPhoneVerified ? 'bg-green-50 border-green-200' : ''}`}
+                        placeholder="+91 XXXXX XXXXX"
+                      />
+                    </div>
+                    {!isPhoneVerified && (
+                      <button
+                        type="button"
+                        onClick={() => sendOtp('phone')}
+                        disabled={!formData.phone || isVerifying === 'phone' || isSendingOtp === 'phone'}
+                        className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all flex items-center justify-center min-w-[90px]"
+                      >
+                        {isSendingOtp === 'phone' ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : 'Send OTP'}
+                      </button>
+                    )}
+                    {isPhoneVerified && (
+                      <div className="flex items-center text-green-600 font-semibold text-sm gap-1">
+                        <Check size={18} /> Verified
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Enter Phone OTP"
+                        value={phoneOtp}
+                        onChange={(e) => setPhoneOtp(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
+                        autoFocus
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => verifyOtp('phone')}
+                      disabled={isVerifying === 'phone'}
+                      className="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all"
+                    >
+                      {isVerifying === 'phone' ? '...' : 'Verify'}
+                    </button>
+
+                  </div>
+                )}
                 {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
             </div>
 
             {/* Passwords */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.password ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="••••••••"
-                  />
+            <div className={`space-y-6 transition-all duration-300 ${(!isEmailVerified || !isPhoneVerified) ? 'opacity-40 grayscale pointer-events-none' : 'opacity-100'}`}>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                    <input
+                      type="password"
+                      name="password"
+                      id="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.password ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
                 </div>
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-              </div>
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 mb-2">
-                  Confirm Password
-                </label>
-                <div className="relative">
-                  <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    placeholder="••••••••"
-                  />
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 mb-2">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Lock size={18} className="absolute left-3 top-3 text-gray-400" />
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      id="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
                 </div>
-                {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
               </div>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center font-bold"
+              disabled={isLoading || !isEmailVerified || !isPhoneVerified || !formData.companyName || !formData.contactPersonName || !formData.password || formData.password !== formData.confirmPassword}
+              className="w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center font-bold"
             >
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
                   Creating Account...
                 </>
-              ) : 'Create Investor Account'}
+              ) : 'Register as Investor'}
             </button>
 
             {/* Sign In Link */}
