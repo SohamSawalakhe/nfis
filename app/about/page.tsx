@@ -3,8 +3,18 @@ import { Calendar, Users, MapPin, Handshake, Star, TrendingUp, CheckCircle, Zap 
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About Us | National Franchise Investment Summit',
+  title: 'About Us | India\'s Premier Franchise Hub | NFIS',
   description: 'Learn about NFIS, India\'s premier platform connecting world-class franchisors with strategic capital partners and ambitious entrepreneurs.',
+  alternates: {
+    canonical: 'https://nationalfranchiseinvestmentsummit.com/about',
+  },
+  openGraph: {
+    title: 'About NFIS | National Franchise Investment Summit',
+    description: 'Discover the mission and impact of India\'s largest franchise investment hub.',
+    url: 'https://nationalfranchiseinvestmentsummit.com/about',
+    type: 'website',
+  },
+  keywords: ['About NFIS', 'Franchise History', 'Investment Platform India', 'Business Networking Hub'],
 };
 
 export default function AboutPage() {
