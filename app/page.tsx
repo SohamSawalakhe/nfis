@@ -2,38 +2,26 @@ import Home from './ClientHome';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'NFIS India | National Franchise Investment Summit',
-  description: 'Connect with India\'s best franchise opportunities. NFIS brings together 600+ leading brands, high-net-worth investors, and ambitious entrepreneurs in one premier franchise discovery platform. Explore low-investment, high-profit business models across India.',
-  keywords: [
-    'Franchise Investment Summit India',
-    'NFIS Mumbai',
-    'QSR Franchise',
-    'Health & Wellness',
-    'Education & Training',
-    'Global Pavilion',
-    'Retail & Lifestyle',
-    'Hospitality & Stay',
-    'Kids & Entertainment',
-    'Ecosystem & Support',
-    'Automobile & EV',
-    'Business Services',
-    'Home Services',
-    'Finance & Banking'
-  ],
+  title: 'National Franchise Investment Summit',
+  description:
+    'Connect with India\'s best franchise opportunities. NFIS brings together 600+ leading brands, investors, and entrepreneurs on one powerful platform.',
+
   openGraph: {
-    title: 'National Franchise Investment Summit (NFIS) | Discover Your Next Business Opportunity',
-    description: 'Explore vetted franchise and investment opportunities. Join India\'s largest network of franchisors and investors at NFIS.',
+    title: 'National Franchise Investment Summit',
+    description:
+      'Explore top franchise opportunities and connect with leading brands in India.',
     url: '/',
     images: [
       {
         url: '/logo.png',
         width: 1200,
         height: 630,
-        alt: 'NFIS Home - National Franchise Investment Summit',
+        alt: 'National Franchise Investment Summit',
       },
     ],
   },
 };
+
 
 export default async function Page() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
