@@ -10,12 +10,12 @@ import { HomepageSearchBar } from '@/components/homepage-search-bar';
 import { TrendingUp, Award, Users, Target, RefreshCw } from 'lucide-react';
 import { Franchise } from '@/lib/types';
 
-export default function Home({ 
-  initialFranchises = [], 
-  initialExhibitions = [] 
-}: { 
-  initialFranchises?: Franchise[], 
-  initialExhibitions?: any[] 
+export default function Home({
+  initialFranchises = [],
+  initialExhibitions = []
+}: {
+  initialFranchises?: Franchise[],
+  initialExhibitions?: any[]
 }) {
   const [featuredFranchises, setFeaturedFranchises] = useState<Franchise[]>(initialFranchises);
   const [loadingFranchises, setLoadingFranchises] = useState(false);
@@ -137,7 +137,7 @@ export default function Home({
                 <div className="relative w-full h-full transform transition-transform duration-1000 group-hover:scale-110">
                   <Image
                     src="/logo.png"
-                    alt="NFIS Logo"
+                    alt="National Franchise India Summit (NFIS) - India's Premier Business Growth Platform"
                     fill
                     className="object-contain"
                     priority
@@ -150,11 +150,12 @@ export default function Home({
               <div className="absolute -inset-4 border border-white/5 rounded-full transition-all duration-1000 group-hover:scale-150 group-hover:opacity-0 delay-75"></div>
             </div>
             <p className="text-sm md:text-base font-semibold text-red-200 mb-3 uppercase tracking-[0.3em]">India's Premier Franchise Ecosystem</p>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight text-balance">
-              National Franchise Investment Summit
+            <h1 className="text-4xl md:text-7xl font-bold mb-4 leading-tight text-balance">
+              National Franchise <br className="hidden md:block" /> Investment Summit
             </h1>
-            <p className="text-lg md:text-xl opacity-90 text-balance max-w-3xl mx-auto">
-              Connect with 500+ leading franchise brands, serious investors, and ambitious entrepreneurs. Attend our premium exhibitions across major Indian cities.
+            <p className="text-lg md:text-2xl opacity-90 text-balance max-w-3xl mx-auto leading-relaxed">
+              Unlock the best <strong>franchise opportunities in India</strong>.
+              Connect with 600+ vetted brands, elite investors, and ambitious entrepreneurs at our flagship business showcase.
             </p>
           </div>
         </div>
@@ -225,6 +226,75 @@ export default function Home({
             >
               View All Events
             </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Industry Focus Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-600 mb-6">
+                <TrendingUp size={14} />
+                <span className="text-[10px] font-black uppercase tracking-widest">Market Intelligence</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-8 leading-tight tracking-tighter">
+                Tap Into High-Growth <br /> Franchise Sectors
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed mb-10 font-medium max-w-xl text-balance">
+                The Indian franchise ecosystem is evolving rapidly. Explore vetted opportunities across our 12 major industry verticals, each curated for scalability and high return on investment.
+              </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                {[
+                  "QSR", "Health & Wellness", "Education & Training", "Global Pavilion",
+                  "Retail & Lifestyle", "Hospitality & Stay", "Kids & Entertainment", "Ecosystem & Support",
+                  "Automobile & EV", "Business Services", "Home Services", "Finance & Banking"
+                ].map((sector) => (
+                  <Link
+                    key={sector}
+                    href={`/franchises?category=${encodeURIComponent(sector)}`}
+                    className="flex flex-col gap-2 group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-600 group-hover:scale-150 transition-all duration-300"></div>
+                      <span className="text-xs font-black text-gray-800 group-hover:text-red-600 transition-colors uppercase tracking-tight">{sector}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="mt-12">
+                <Link
+                  href="/franchises"
+                  className="inline-flex items-center gap-2 text-sm font-black text-gray-900 hover:text-red-600 transition-colors uppercase tracking-widest border-b-2 border-gray-900 hover:border-red-600 pb-1"
+                >
+                  Explore All Franchisors
+                </Link>
+              </div>
+            </div>
+            <div className="flex-1 relative order-first lg:order-last">
+              <div className="relative aspect-square max-w-md mx-auto">
+                {/* Decorative Elements */}
+                <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-blue-600 rounded-[4rem] rotate-6 opacity-5 blur-2xl"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-gray-100 rounded-full animate-pulse-slow"></div>
+
+                <div className="relative z-10 w-full h-full bg-gray-50 rounded-[3rem] border border-gray-100 shadow-2xl p-12 flex items-center justify-center overflow-hidden">
+                  <div className="absolute inset-0 opacity-20 pointer-events-none">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-red-400 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-400 rounded-full blur-3xl"></div>
+                  </div>
+                  <Image
+                    src="/logo.png"
+                    alt="Franchise Industry Growth India - 12 Major Categories"
+                    width={400}
+                    height={400}
+                    className="relative z-10 w-full h-full object-contain scale-90 animate-up-down"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

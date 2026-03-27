@@ -17,11 +17,36 @@ const SITE_URL = 'https://nationalfranchiseinvestmentsummit.com';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'National Franchise Investment Summit | NFIS India',
-    template: '%s | NFIS'
+    default: 'National Franchise Investment Summit | Best Franchise Opportunities India',
+    template: '%s | National Franchise Investment Summit NFIS'
   },
-  description: 'National Franchise Investment Summit (NFIS) - India\'s premier platform for franchise discovery. Secure vetted opportunities, connect with capital partners, and grow your portfolio across 600+ brands.',
-  keywords: ['Franchise India', 'Investment Summit', 'Business Opportunities', 'Franchise Expo', 'NFIS', 'Capital Network', 'Franchise Growth', 'Master Franchise India'],
+  description: 'National Franchise Investment Summit (NFIS) is India\'s premier platform for franchise discovery. Explore top franchise business opportunities, connect with 600+ leading brands, and secure vetted investments with high ROI. Your journey to business ownership starts here.',
+  keywords: [
+    'Franchise India',
+    'Best Franchise Opportunities India',
+    'QSR Franchise India',
+    'Health & Wellness Franchise',
+    'Education & Training Franchise',
+    'Global Pavilion Franchise',
+    'Retail & Lifestyle Franchise',
+    'Hospitality & Stay Franchise',
+    'Kids & Entertainment Franchise',
+    'Ecosystem & Support Franchise',
+    'Automobile & EV Franchise',
+    'Business Services Franchise',
+    'Home Services Franchise',
+    'Finance & Banking Franchise',
+    'Low Investment Franchise India',
+    'High Profit Franchise Business',
+    'Franchise Investment Summit',
+    'Business Opportunities India',
+    'Franchise Expo',
+    'NFIS India',
+    'Capital Network',
+    'Master Franchise Opportunities India',
+    'Top Franchise Brands',
+    'Small Business Opportunities India'
+  ],
   authors: [{ name: 'NFIS Team' }],
   creator: 'National Franchise Investment Summit',
   publisher: 'National Franchise Investment Summit',
@@ -34,25 +59,25 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: 'National Franchise Investment Summit | Connect with 600+ Leading Brands',
-    description: 'Explore vetted franchise and investment opportunities. Join India\'s premier franchise ecosystem at NFIS.',
+    title: 'National Franchise Investment Summit | Connect with 600+ Vetted Brands',
+    description: 'India\'s largest franchise discovery platform. Explore high-ROI business opportunities and connect with top franchisors at NFIS.',
     url: SITE_URL,
     siteName: 'National Franchise Investment Summit',
     locale: 'en_IN',
     type: 'website',
     images: [
       {
-        url: '/logo.png', // Official logo as fallback OG image
+        url: '/logo.png',
         width: 800,
         height: 800,
-        alt: 'NFIS - National Franchise Investment Summit',
+        alt: 'NFIS - National Franchise Investment Summit Logo',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'National Franchise Investment Summit | NFIS',
-    description: 'India\'s premier platform for franchise discovery and investment.',
+    title: 'National Franchise Investment Summit | Top Franchise Hub India',
+    description: 'Connect with India\'s best franchise brands and scale your business portfolio with NFIS.',
     creator: '@NFIS_India',
     images: ['/logo.png'],
   },
@@ -81,8 +106,10 @@ export const metadata: Metadata = {
       },
       {
         url: '/favicon/favicon.ico',
+        rel: 'icon',
       },
     ],
+    shortcut: '/favicon.ico',
     apple: '/favicon/apple-touch-icon.png',
     other: [
       {
@@ -91,6 +118,7 @@ export const metadata: Metadata = {
       },
     ],
   },
+  category: 'Business & Investment',
 }
 
 export default function RootLayout({
@@ -139,6 +167,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <Script
           id="organization-jsonld"
           type="application/ld+json"

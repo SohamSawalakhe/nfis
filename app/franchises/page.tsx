@@ -2,18 +2,27 @@ import FranchisesPage from './ClientFranchises';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Franchise Hub | Discover Premium Business Opportunities',
-  description: 'Explore registered franchise brands ready for nationwide expansion. Modernize your portfolio with vetted and scalable business models.',
+  title: 'Top Franchise Opportunities in India | Browse 600+ Brands',
+  description: 'Explore the best franchise business opportunities in India. From food and retail to education and services, discover vetted and scalable business models with high ROI at National Franchise Investment Summit (NFIS).',
   alternates: {
     canonical: 'https://nationalfranchiseinvestmentsummit.com/franchises',
   },
   openGraph: {
-    title: 'Franchise Hub | Premium Investment Opportunities',
-    description: 'Find your perfect franchise match.',
-    url: 'https://nationalfranchiseinvestmentsummit.com/franchises', // Use full URL
+    title: 'Top Franchise Opportunities India | National Franchise Hub',
+    description: 'Find your perfect franchise match. Explore 600+ vetted brands ready for nationwide expansion.',
+    url: 'https://nationalfranchiseinvestmentsummit.com/franchises',
     type: 'website',
   },
-  keywords: ['Franchise Hub', 'Business Opportunities', 'Investment Portfolio', 'Scalable Models', 'Brand Expansion'],
+  keywords: [
+    'Best Franchise Opportunities India',
+    'Low Investment Franchise',
+    'Food Franchise India',
+    'Master Franchise Opportunities India',
+    'Business for sale India',
+    'Franchise brand expansion',
+    'NFIS Franchise Hub',
+    'Verified Franchisors India'
+  ],
 };
 
 export default async function Page() {
@@ -24,7 +33,7 @@ export default async function Page() {
     const res = await fetch(`${API_URL}/api/exhibitor-registrations/`, {
       next: { revalidate: 3600 } // Cache for 1 hour
     });
-    
+
     if (res.ok) {
       const data = await res.json();
       const results = data.results || data;

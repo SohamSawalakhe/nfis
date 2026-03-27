@@ -2,15 +2,31 @@ import Home from './ClientHome';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'National Franchise Investment Summit | India\'s Premier Franchise Ecosystem',
-  description: 'Connect with 600+ leading franchise brands, high-net-worth investors, and ambitious entrepreneurs at the National Franchise Investment Summit (NFIS). Attend premium exhibitions in major Indian cities.',
+  title: 'NFIS India | National Franchise Investment Summit',
+  description: 'Connect with India\'s best franchise opportunities. NFIS brings together 600+ leading brands, high-net-worth investors, and ambitious entrepreneurs in one premier franchise discovery platform. Explore low-investment, high-profit business models across India.',
+  keywords: [
+    'Franchise Investment Summit India',
+    'NFIS Mumbai',
+    'QSR Franchise',
+    'Health & Wellness',
+    'Education & Training',
+    'Global Pavilion',
+    'Retail & Lifestyle',
+    'Hospitality & Stay',
+    'Kids & Entertainment',
+    'Ecosystem & Support',
+    'Automobile & EV',
+    'Business Services',
+    'Home Services',
+    'Finance & Banking'
+  ],
   openGraph: {
-    title: 'National Franchise Investment Summit (NFIS) | Connect with Leading Brands',
-    description: 'Explore vetted franchise and investment opportunities. Join the National Franchise Investment Summit (NFIS) community today.',
+    title: 'National Franchise Investment Summit (NFIS) | Discover Your Next Business Opportunity',
+    description: 'Explore vetted franchise and investment opportunities. Join India\'s largest network of franchisors and investors at NFIS.',
     url: '/',
     images: [
       {
-        url: '/og-home.png', // Assuming user might add later
+        url: '/logo.png',
         width: 1200,
         height: 630,
         alt: 'NFIS Home - National Franchise Investment Summit',
@@ -29,7 +45,7 @@ export default async function Page() {
     const franchiseRes = await fetch(`${API_URL}/api/exhibitor-registrations/`, {
       next: { revalidate: 3600 }
     });
-    
+
     if (franchiseRes.ok) {
       const data = await franchiseRes.json();
       const results = data.results || data;
@@ -73,7 +89,7 @@ export default async function Page() {
     const exhibitionRes = await fetch(`${API_URL}/api/events/`, {
       next: { revalidate: 3600 }
     });
-    
+
     if (exhibitionRes.ok) {
       const data = await exhibitionRes.json();
       if (data && data.results) {
