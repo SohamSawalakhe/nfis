@@ -29,7 +29,7 @@ export default function Home({
       if (initialFranchises.length > 0) return;
       setLoadingFranchises(true);
       try {
-        const res = await fetch(`${API_URL}/api/exhibitor-registrations/`);
+        const res = await fetch('/api/exhibitor-registrations-proxy');
         if (res.ok) {
           const data = await res.json();
           const results = data.results || data;

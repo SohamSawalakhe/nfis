@@ -191,8 +191,7 @@ function FranchiseeRegistration() {
     const fetchBrands = async () => {
       setIsBrandsLoading(true);
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const res = await fetch(`${API_URL}/api/exhibitor-registrations/`);
+        const res = await fetch('/api/exhibitor-registrations-proxy');
         if (res.ok) {
           const data = await res.json();
           const results = data.results || data;
@@ -200,9 +199,11 @@ function FranchiseeRegistration() {
             ? results.map((r: any) => r.company_name).filter(Boolean)
             : [];
           setBrandsList(Array.from(new Set(names)));
+        } else {
+          console.warn(`Fetch returned status ${res.status}`);
         }
       } catch (err) {
-        console.error('Failed to fetch brands:', err);
+        console.error('Failed to connect to exhibitors network:', err);
       } finally {
         setIsBrandsLoading(false);
       }

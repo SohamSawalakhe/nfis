@@ -20,7 +20,7 @@ export default function InvestorsPage() {
     setError(null);
     try {
       // Fetch without authentication, as per user requirement (matching franchisor style)
-      const res = await fetch(`${API_URL}/api/investor-registrations/`);
+      const res = await fetch('/api/investor-registrations-proxy');
 
       if (res.ok) {
         const data = await res.json();
