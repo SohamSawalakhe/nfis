@@ -181,9 +181,17 @@ export default function FranchisesPage({ initialFranchises = [] }: { initialFran
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-12">
-          {/* Filtering Sidebar */}
-          <div className="lg:col-span-1">
+        {franchises.length === 0 && !loading ? (
+          <div className="bg-white rounded-[3rem] border border-gray-100 p-24 text-center shadow-xl max-w-3xl mx-auto mt-12 mb-24">
+            <h3 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Currently Onboarding.</h3>
+            <p className="text-gray-500 font-medium max-w-sm mx-auto leading-relaxed text-lg">
+              Please come back after sometime.
+            </p>
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-4 gap-12">
+            {/* Filtering Sidebar */}
+            <div className="lg:col-span-1">
             <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-2xl sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto custom-scrollbar">
               <div className="flex items-center justify-between mb-8">
                 <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -412,6 +420,7 @@ export default function FranchisesPage({ initialFranchises = [] }: { initialFran
             </div>
           </div>
         </div>
+        )}
       </div>
 
       <style jsx global>{`

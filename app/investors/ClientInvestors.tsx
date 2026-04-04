@@ -109,6 +109,13 @@ export default function InvestorsPage() {
             <p className="text-gray-500 font-medium mb-10 max-w-sm mx-auto">{error}</p>
             <button onClick={fetchInvestors} className="px-12 py-5 bg-gray-900 text-white font-black rounded-2xl uppercase tracking-widest text-xs hover:bg-black transition-all">Retry</button>
           </div>
+        ) : investors.length === 0 && !loading ? (
+          <div className="bg-white rounded-[3rem] border border-gray-100 p-24 text-center shadow-xl max-w-3xl mx-auto mt-12">
+            <h3 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Currently Onboarding.</h3>
+            <p className="text-gray-500 font-medium max-w-sm mx-auto leading-relaxed text-lg">
+              Please come back after sometime.
+            </p>
+          </div>
         ) : (
           <div className="grid lg:grid-cols-4 gap-12">
             <div className="lg:col-span-1 space-y-8">
