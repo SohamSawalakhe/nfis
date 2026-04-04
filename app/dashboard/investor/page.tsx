@@ -5,6 +5,7 @@ import { RefreshCw, Save, TrendingUp, PieChart, Wallet, Target, Briefcase, MapPi
 import Cropper, { Area } from 'react-easy-crop';
 import { toast } from 'sonner';
 import { authFetch, authFetchForm } from '@/lib/authFetch';
+import LoadingScreen from '@/components/loading-screen';
 
 const getCroppedImg = async (imageSrc: string, pixelCrop: Area): Promise<Blob> => {
   const image = new Image();
@@ -164,6 +165,7 @@ export default function InvestorDashboard() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000 max-w-6xl w-full">
+      {loading && <LoadingScreen />}
       <header className="mb-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
           <div>

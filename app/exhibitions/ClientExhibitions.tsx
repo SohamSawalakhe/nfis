@@ -4,6 +4,7 @@ import { ExhibitionCard } from '@/components/exhibition-card';
 
 import { Search, Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import LoadingScreen from '@/components/loading-screen';
 
 export default function ExhibitionsPage({ initialExhibitions = [] }: { initialExhibitions?: any[] }) {
   const [exhibitions, setExhibitions] = useState<any[]>(initialExhibitions);
@@ -59,6 +60,7 @@ export default function ExhibitionsPage({ initialExhibitions = [] }: { initialEx
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {loading && <LoadingScreen />}
         {/* Header */}
         <div className="mb-12 text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">

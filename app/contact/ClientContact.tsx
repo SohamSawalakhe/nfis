@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Mail, Phone, MapPin, CheckCircle, Lock } from 'lucide-react';
 import { toast } from 'react-toastify';
+import LoadingScreen from '@/components/loading-screen';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -164,6 +165,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {isLoading && <LoadingScreen />}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-12 text-center">

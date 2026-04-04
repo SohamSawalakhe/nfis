@@ -5,6 +5,7 @@ import { RefreshCw, Save, Upload, Camera, X, AlertCircle } from 'lucide-react';
 import Cropper, { Area } from 'react-easy-crop';
 import { toast } from 'sonner';
 import { authFetch, authFetchForm } from '@/lib/authFetch';
+import LoadingScreen from '@/components/loading-screen';
 
 const getCroppedImg = async (imageSrc: string, pixelCrop: Area): Promise<Blob> => {
   const image = new Image();
@@ -240,6 +241,7 @@ export default function FranchisorDashboard() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl w-full">
+      {loading && <LoadingScreen />}
       <header className="mb-10">
         <h1 className="text-4xl font-black text-gray-900 tracking-tight mb-2">NFIS Brand Console</h1>
         <p className="text-gray-500 text-lg font-medium">Manage only the essential details required for your presence.</p>

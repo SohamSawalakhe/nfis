@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { InvestorCard } from '@/components/investor-card';
 import { Investor } from '@/lib/types';
 import { Search, Filter, ShieldCheck, RefreshCw, AlertTriangle } from 'lucide-react';
+import LoadingScreen from '@/components/loading-screen';
 
 export default function InvestorsPage() {
   const [investors, setInvestors] = useState<Investor[]>([]);
@@ -99,6 +100,8 @@ export default function InvestorsPage() {
             </div>
           </div>
         </div>
+
+        {loading && <LoadingScreen />}
 
         {error ? (
           <div className="bg-white rounded-[3rem] border border-red-100 p-20 text-center shadow-2xl">

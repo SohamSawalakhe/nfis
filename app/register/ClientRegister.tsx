@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, User, Building2, DollarSign, Phone, MapPin, Check, Search, ChevronDown, X } from 'lucide-react';
 import { toast } from 'react-toastify';
+import LoadingScreen from '@/components/loading-screen';
 
 export const PRODUCT_CATEGORIES_BY_INDUSTRY: Record<string, string[]> = {
   'QSR': ['Fast Food', 'Cafe & Bakery', 'Cloud Kitchen', 'Ice Cream & Desserts', 'Beverages', 'Fine Dining', 'Other Food'],
@@ -303,6 +304,7 @@ function FranchiseeRegistration() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+      {isLoading && <LoadingScreen />}
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg border border-gray-200 p-8 md:p-12">
           {/* Header */}
@@ -776,6 +778,7 @@ function FranchisorRegistration() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+      {isLoading && <LoadingScreen />}
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg border border-gray-200 p-8 md:p-12">
           {/* Header */}
@@ -1217,6 +1220,7 @@ function InvestorRegistration() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+      {isLoading && <LoadingScreen />}
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-lg border border-gray-200 p-8 md:p-12">
           {/* Header */}

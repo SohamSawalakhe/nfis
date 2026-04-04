@@ -6,6 +6,7 @@ import { Franchise } from '@/lib/types';
 import { Search, Filter, Briefcase, ChevronDown, Check, X, ShieldCheck, ArrowUpDown, TrendingUp, Users, RefreshCw, Zap } from 'lucide-react';
 import * as Slider from '@radix-ui/react-slider';
 import * as Select from '@radix-ui/react-select';
+import LoadingScreen from '@/components/loading-screen';
 
 type SortOption = 'relevance' | 'investment-asc' | 'investment-desc' | 'roi-desc' | 'units-desc';
 
@@ -180,6 +181,8 @@ export default function FranchisesPage({ initialFranchises = [] }: { initialFran
             </div>
           </div>
         </div>
+
+        {loading && <LoadingScreen />}
 
         {franchises.length === 0 && !loading ? (
           <div className="bg-white rounded-[3rem] border border-gray-100 p-24 text-center shadow-xl max-w-3xl mx-auto mt-12 mb-24">

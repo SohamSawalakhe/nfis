@@ -8,6 +8,7 @@ import { FranchiseCard } from '@/components/franchise-card';
 import { ExhibitionCard } from '@/components/exhibition-card';
 import { HomepageSearchBar } from '@/components/homepage-search-bar';
 import { TrendingUp, Award, Users, Target, RefreshCw } from 'lucide-react';
+import LoadingScreen from '@/components/loading-screen';
 import { Franchise } from '@/lib/types';
 
 export default function Home({
@@ -118,6 +119,7 @@ export default function Home({
 
   return (
     <div className="min-h-screen">
+      {(loadingFranchises || loadingExhibitions) && <LoadingScreen />}
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white py-16 md:py-28 relative">
         <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">

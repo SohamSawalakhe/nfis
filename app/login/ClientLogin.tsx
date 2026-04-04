@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
 import { toast } from 'react-toastify';
+import LoadingScreen from '@/components/loading-screen';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -103,6 +104,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {isLoading && <LoadingScreen />}
       {/* Left side: branding/marketing (hidden on small screens) */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-gray-900 to-black text-white p-12 flex-col justify-between relative overflow-hidden">
         {/* Abstract decorative background */}
