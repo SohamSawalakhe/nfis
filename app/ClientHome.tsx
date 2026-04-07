@@ -131,7 +131,7 @@ export default function Home({
     <div className="min-h-screen">
       {(loadingFranchises || loadingExhibitions) && <LoadingScreen />}
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white py-16 md:py-28 relative">
+      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white py-16 md:py-28 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
           <div className="absolute bottom-10 right-10 w-96 h-96 bg-red-400 rounded-full blur-3xl"></div>
@@ -174,7 +174,7 @@ export default function Home({
       </section>
 
       {/* Featured Franchises */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
@@ -214,7 +214,7 @@ export default function Home({
       </section>
 
       {/* Featured Exhibitions */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 text-balance">
@@ -312,7 +312,7 @@ export default function Home({
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-red-50">
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-red-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center text-balance">
             Why Attend National Franchise India Summit?
@@ -355,7 +355,7 @@ export default function Home({
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white border-b border-gray-200">
+      <section className="py-16 bg-white border-b border-gray-200 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">

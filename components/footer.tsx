@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <footer className="bg-gradient-to-r from-gray-900 to-gray-800 text-white mt-20 border-t border-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* About Section */}
           <div>
             <div className="flex items-center gap-4 mb-6 group">
@@ -92,7 +92,7 @@ export function Footer() {
             <div className="space-y-3 text-sm">
               <div className="flex gap-2">
                 <Mail size={16} className="flex-shrink-0 mt-0.5 text-red-400" />
-                <span className="text-gray-400">info@nationalfranchiseinvestmentsummit.com</span>
+                <span className="text-gray-400 break-all">info@nationalfranchiseinvestmentsummit.com</span>
               </div>
               <div className="flex gap-2">
                 <Phone size={16} className="flex-shrink-0 mt-0.5 text-red-400" />

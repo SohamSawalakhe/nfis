@@ -104,7 +104,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex gap-8">
+          <div className="hidden xl:flex gap-8">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -116,7 +116,7 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden xl:flex items-center gap-4">
             {isLoggedIn ? (
               <div className="relative">
                 <button
@@ -183,68 +183,112 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden"
+            className="xl:hidden"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+      </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden pb-4 space-y-2">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+      {/* Mobile Menu Overlay */}
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="xl:hidden fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[100] animate-in fade-in duration-200"
+            onClick={() => setIsOpen(false)}
+          />
+
+          {/* Side Drawer */}
+          <div className="xl:hidden fixed top-0 right-0 h-screen w-[85vw] sm:w-[60vw] md:w-[40vw] max-w-sm bg-white shadow-2xl z-[101] flex flex-col animate-in slide-in-from-right duration-300">
+            {/* Drawer Header */}
+            <div className="flex flex-col border-b border-gray-100 relative bg-gray-50/50 pt-8 pb-4">
+              {/* Logo Area */}
+              <div className="flex justify-center items-center w-full mb-4">
+                <div className="relative w-16 h-16">
+                  <Image
+                    src="/logo.png"
+                    alt="NFIS Logo"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+
+              <button 
                 onClick={() => setIsOpen(false)}
+                className="p-2 text-gray-500 hover:bg-gray-100 hover:text-red-600 rounded-lg transition-colors absolute top-4 right-4 bg-white border border-gray-200 shadow-sm z-10"
+                aria-label="Close menu"
               >
-                {link.label}
-              </Link>
-            ))}
+                <X size={18} />
+              </button>
 
+              <div className="px-6 text-center">
+                <span className="font-black text-red-600 tracking-tight uppercase tracking-widest text-[10px]">Menu Options</span>
+              </div>
+            </div>
+
+            {/* Navigation Links */}
+            <div className="px-4 py-6 space-y-2 flex-grow overflow-y-auto">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-red-700 rounded-xl transition-colors font-bold border border-transparent hover:border-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Bottom Actions */}
             {isLoggedIn ? (
-              <div className="space-y-2 pt-4 border-t border-gray-100">
-                <div className="px-3">
-                  <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase mb-2">My Profile</p>
+              <div className="p-6 border-t border-gray-100 bg-gray-50/80 mt-auto">
+                <div className="mb-4">
+                  <p className="text-[10px] font-black text-gray-400 tracking-widest uppercase mb-1">My Profile</p>
                   <p className="text-sm font-bold text-gray-900">{userData.name}</p>
                   {userData.company && <p className="text-xs text-gray-500 font-medium">{userData.company}</p>}
                 </div>
-                <Link
-                  href={getDashboardLink()}
-                  className="block px-3 py-2 bg-blue-50 text-blue-700 font-bold text-sm rounded-lg"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Go to Dashboard
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 bg-red-50 text-red-600 font-bold text-sm rounded-lg"
-                >
-                  Logout Session
-                </button>
+                <div className="flex flex-col gap-3">
+                  <Link
+                    href={getDashboardLink()}
+                    className="w-full text-center px-4 py-3 bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold text-sm rounded-xl transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Go to Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-center px-4 py-3 bg-red-100 hover:bg-red-200 text-red-600 font-bold text-sm rounded-xl transition-colors"
+                  >
+                    Logout Session
+                  </button>
+                </div>
               </div>
             ) : (
-              <div className="flex gap-2 pt-2">
+              <div className="p-6 border-t border-gray-100 bg-gray-50/80 mt-auto flex flex-col gap-3">
                 <a
                   href="/login"
-                  className="flex-1 px-3 py-2 border border-gray-300 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-50 transition-colors text-center"
+                  className="w-full px-4 py-3.5 bg-white border border-gray-200 text-gray-700 font-bold text-sm rounded-xl hover:bg-gray-50 transition-colors text-center shadow-sm"
+                  onClick={() => setIsOpen(false)}
                 >
                   Sign In
                 </a>
                 <Link
                   href="/register"
-                  className="flex-1 px-3 py-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-medium text-sm rounded-lg transition-all text-center shadow-md"
+                  className="w-full px-4 py-3.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-sm rounded-xl transition-all text-center shadow-md"
+                  onClick={() => setIsOpen(false)}
                 >
                   Register Now
                 </Link>
               </div>
             )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </nav>
   );
 }
