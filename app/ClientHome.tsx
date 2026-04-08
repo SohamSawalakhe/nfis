@@ -131,10 +131,21 @@ export default function Home({
     <div className="min-h-screen">
       {(loadingFranchises || loadingExhibitions) && <LoadingScreen />}
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white py-16 md:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-red-400 rounded-full blur-3xl"></div>
+      <section className="relative text-white py-16 md:py-32 overflow-hidden min-h-[80vh] flex items-center">
+        {/* Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            loop
+            muted // Sound disabled for background atmosphere
+            playsInline
+            preload="auto"
+            className="w-full h-full object-cover"
+          >
+            <source src="/video.mp4" type="video/mp4" />
+          </video>
+          {/* Refined Cinematic Overlay for readability and premium feel */}
+          <div className="absolute inset-0 bg-blue-950/20 backdrop-blur-[1px] transition-all duration-700 bg-gradient-to-b from-blue-950/40 via-transparent to-blue-950/80"></div>
         </div>
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import NextImage from 'next/image';
 import { RefreshCw, Save, Upload, Camera, X, AlertCircle } from 'lucide-react';
 import Cropper, { Area } from 'react-easy-crop';
 import { toast } from 'sonner';
@@ -254,8 +255,25 @@ export default function FranchisorDashboard() {
             <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2"><Camera size={20} className="text-red-500" />Brand Identity</h3>
             <div className="flex flex-col items-center">
               <div className="relative group cursor-pointer w-48 h-48 rounded-full overflow-hidden border-4 border-gray-50 shadow-inner bg-gray-50 mb-6 transition-all hover:scale-[1.02]">
-                {profile.logo ? <img src={profile.logo} alt="Logo" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-gray-300"><Upload size={48} strokeWidth={1} /><span className="text-xs font-bold mt-2 uppercase tracking-tighter">No Logo</span></div>}
-                <label className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"><Camera className="text-white mb-2" size={32} /><span className="text-white text-xs font-bold uppercase tracking-wider">Update Logo</span><input type="file" className="hidden" accept="image/*" onChange={onFileChange} /></label>
+                {profile.logo ? (
+                  <NextImage
+                    src={profile.logo}
+                    alt="Logo"
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                    <Upload size={48} strokeWidth={1} />
+                    <span className="text-xs font-bold mt-2 uppercase tracking-tighter">No Logo</span>
+                  </div>
+                )}
+                <label className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer">
+                  <Camera className="text-white mb-2" size={32} />
+                  <span className="text-white text-xs font-bold uppercase tracking-wider">Update Logo</span>
+                  <input type="file" className="hidden" accept="image/*" onChange={onFileChange} />
+                </label>
               </div>
               <p className="text-xs text-center text-gray-400 font-medium px-4 leading-relaxed">Recommended for event collateral: 512x512px SVG or PNG.</p>
             </div>

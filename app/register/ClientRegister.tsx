@@ -618,7 +618,7 @@ function FranchisorRegistration() {
   const sendOtp = async (type: 'email' | 'phone') => {
     const value = type === 'email' ? formData.email : formData.phone;
     if (!value) {
-        toast.error(`Please enter your ${type} first.`);
+      toast.error(`Please enter your ${type} first.`);
       return;
     }
 
@@ -730,7 +730,7 @@ function FranchisorRegistration() {
         if (data.access) localStorage.setItem('access_token', data.access);
         if (data.refresh) localStorage.setItem('refresh_token', data.refresh);
         if (formData.email) localStorage.setItem('user_email', formData.email);
-        
+
         const role = data.user?.role || data.role || 'franchisor';
         localStorage.setItem('user_role', role);
         localStorage.setItem('user_name', formData.contactPersonName);
@@ -1060,7 +1060,7 @@ function InvestorRegistration() {
   const sendOtp = async (type: 'email' | 'phone') => {
     const value = type === 'email' ? formData.email : formData.phone;
     if (!value) {
-        toast.error(`Please enter your ${type} first.`);
+      toast.error(`Please enter your ${type} first.`);
       return;
     }
 

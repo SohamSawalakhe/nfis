@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Calendar, Users, MapPin, Handshake, Star, TrendingUp, CheckCircle, Zap } from 'lucide-react';
 import { Metadata } from 'next';
 
@@ -115,10 +116,11 @@ export default function AboutPage() {
                   <div className="absolute inset-0 bg-white/5 rounded-[2.5rem] -rotate-3 backdrop-blur-sm border border-white/5"></div>
                   <div className="relative w-full h-full bg-white rounded-[2rem] p-6 shadow-2xl flex items-center justify-center">
                     <div className="relative w-full h-full">
-                      <img 
-                        src="/igtf-logo.png" 
-                        alt="Indo Global Trade Fair Official Logo" 
-                        style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+                      <Image
+                        src="/igtf-logo.png"
+                        alt="Indo Global Trade Fair Official Logo"
+                        fill
+                        className="object-contain"
                       />
                     </div>
                   </div>

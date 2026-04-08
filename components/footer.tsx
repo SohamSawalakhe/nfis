@@ -120,8 +120,8 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className="text-red-500 transition-all underline underline-offset-4 decoration-red-500/30 flex items-center gap-1.5"
               >
-                <span className="bg-white p-0.5 rounded-sm shadow-sm flex items-center justify-center">
-                  <img src="/igtf-logo.png" alt="IGTF Icon" className="w-3.5 h-3.5 object-contain" />
+                <span className="bg-white p-0.5 rounded-sm shadow-sm flex items-center justify-center relative w-4.5 h-4.5">
+                  <Image src="/igtf-logo.png" alt="IGTF Icon" fill className="object-contain" />
                 </span>
                 Indo Global Trade Fair (IGTF)
               </a>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import NextImage from 'next/image';
 import { RefreshCw, Save, TrendingUp, PieChart, Wallet, Target, Briefcase, MapPin, Upload, Camera, X } from 'lucide-react';
 import Cropper, { Area } from 'react-easy-crop';
 import { toast } from 'sonner';
@@ -203,7 +204,13 @@ export default function InvestorDashboard() {
                    <div className="relative group/logo w-32 h-32 mb-4">
                       <div className="w-full h-full rounded-2xl border-4 border-blue-50 overflow-hidden bg-gray-50 flex items-center justify-center relative">
                          {profile.logo ? (
-                            <img src={profile.logo} alt="Firm Logo" className="w-full h-full object-cover" />
+                            <NextImage
+                               src={profile.logo}
+                               alt="Firm Logo"
+                               fill
+                               className="object-cover"
+                               unoptimized
+                            />
                          ) : (
                             <TrendingUp size={40} className="text-blue-200" />
                          )}
