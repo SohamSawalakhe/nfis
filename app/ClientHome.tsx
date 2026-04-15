@@ -131,7 +131,7 @@ export default function Home({
     <div className="min-h-screen">
       {(loadingFranchises || loadingExhibitions) && <LoadingScreen />}
       {/* Hero Section */}
-      <section className="relative text-white py-16 md:py-32 overflow-hidden min-h-[80vh] flex items-center">
+      <section className="relative text-white py-20 md:py-36 overflow-hidden min-h-[90vh] flex items-center">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video
@@ -144,12 +144,16 @@ export default function Home({
           >
             <source src="/video.mp4" type="video/mp4" />
           </video>
-          {/* Refined Cinematic Overlay for readability and premium feel */}
-          <div className="absolute inset-0 bg-blue-950/20 backdrop-blur-[1px] transition-all duration-700 bg-gradient-to-b from-blue-950/40 via-transparent to-blue-950/80"></div>
+          {/* Vignette layer 1 — dark edges, clear centre so video stays visible */}
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.72) 100%)' }} />
+          {/* Vignette layer 2 — heavy top & bottom so logo/text/search bar are legible */}
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.08) 38%, rgba(0,0,0,0.08) 62%, rgba(0,0,0,0.75) 100%)' }} />
+          {/* Vignette layer 3 — subtle brand warmth */}
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(5,10,40,0.18) 0%, transparent 50%, rgba(40,5,5,0.14) 100%)' }} />
         </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+          <div className="text-center mb-10">
             <div className="relative w-32 h-32 mx-auto mb-10 group select-none transition-all duration-700">
               {/* Refined Glowing Orbs in Background */}
               <div className="absolute -inset-8 bg-white/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
@@ -176,10 +180,11 @@ export default function Home({
             <h1 className="text-4xl md:text-7xl font-bold mb-4 leading-tight text-balance">
               National Franchise <br className="hidden md:block" /> Investment Summit
             </h1>
-            <p className="text-lg md:text-2xl opacity-90 text-balance max-w-3xl mx-auto leading-relaxed">
-              Unlock the best <strong>franchise opportunities in India</strong>.
-              Connect with 600+ vetted brands, elite investors, and ambitious entrepreneurs at our flagship business showcase.
-            </p>
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative z-20 w-full mt-2">
+            <HomepageSearchBar />
           </div>
         </div>
       </section>

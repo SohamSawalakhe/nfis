@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import FranchisesPage from './ClientFranchises';
 import { Metadata } from 'next';
 
@@ -81,5 +82,9 @@ export default async function Page() {
     console.error('Error fetching franchises on server:', err);
   }
 
-  return <FranchisesPage initialFranchises={initialFranchises} />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-400">Loading...</div>}>
+      <FranchisesPage initialFranchises={initialFranchises} />
+    </Suspense>
+  );
 }
